@@ -82,9 +82,25 @@ for line in lines:
     for result in all_single_byte_xor(line):
         score = letter_ratio(result)
 
-        if score > 0.7: # under 0.7, it is too unlikely to be text
+        if score > 0.7:  # under 0.7, it is too unlikely to be text
             scores.append(score)
             candidates.append(result)
 
 index_best = scores.index(max(scores))
 print("challenge 4:", candidates[index_best])
+
+
+# ----------------------
+#       Challenge 5
+# ----------------------
+
+def repeating_key_xor(text: bytes, key: bytes):
+    l = len(key)
+    return bytes([text[i] ^ key[i % l] for i in range(0, len(text))])
+
+
+input_a = "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal"
+expected = "0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f"
+input_a = input_a.encode('utf-8')
+result = repeating_key_xor(input_a, b'ICE')
+print(f"challenge 5: {result == bytes.fromhex(expected)}")
