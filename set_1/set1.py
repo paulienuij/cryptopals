@@ -60,11 +60,11 @@ def find_most_likely_single_byte_xor(input_a: bytes):
 
     # look for the option with the highest letter ratio
     max_letter_ratio_i = all_scores.index(max(all_scores))
-    return all_options[max_letter_ratio_i]
+    return all_options[max_letter_ratio_i], max_letter_ratio_i
 
 
 input_a = bytes.fromhex("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
-print("challenge 3:", find_most_likely_single_byte_xor(input_a))
+print("challenge 3:", find_most_likely_single_byte_xor(input_a)[0])
 
 # ----------------------
 #       Challenge 4
@@ -78,10 +78,8 @@ scores = []
 
 for line in lines:
     line = bytes.fromhex(line)
-    find_most_likely_single_byte_xor(line)
     for result in all_single_byte_xor(line):
         score = letter_ratio(result)
-
         if score > 0.7:  # under 0.7, it is too unlikely to be text
             scores.append(score)
             candidates.append(result)

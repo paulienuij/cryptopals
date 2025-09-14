@@ -1,10 +1,11 @@
 from base64 import b64decode
 from itertools import combinations
+from math import floor
 from typing import List
 
 from matplotlib import pyplot as plt
 
-from set_1.set1 import xor_bytes
+from set_1.set1 import xor_bytes, find_most_likely_single_byte_xor, repeating_key_xor
 
 
 # ---------------------------------
@@ -86,3 +87,30 @@ with open("input_6.txt", "rb") as f:
 _, h_dists = find_all_hem_dists(text, 40, 10, plot=False)
 keysize = h_dists.index(min(h_dists)) + 2
 print(f"    most likely keysize:    {keysize}")
+
+# ---------------------------------
+#         Find the key
+# ---------------------------------
+
+# now we know the key length, we can break it into chunks
+number_of_chunks = floor(len(text) / keysize)
+chunks = _chunk(text, keysize, number_of_chunks)
+
+key = ""
+
+# Now transpose the blocks: make a block that is the first byte of every chunk,
+#                           and a block that is the second byte of every chunk, and so on
+
+for k in range(keysize):
+    blocks_k = bytes(chunk[k] for chunk in chunks)
+    _, letter = find_most_likely_single_byte_xor(blocks_k)
+    key = key + chr(letter)
+
+print(f"    most likely key:        {key}")
+
+# ---------------------------------
+#           Break it!
+# ---------------------------------
+
+with open("output_6.txt", "wb") as f:
+    f.write(repeating_key_xor(text, key.encode("ascii")))
